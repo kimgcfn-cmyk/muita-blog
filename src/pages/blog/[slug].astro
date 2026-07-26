@@ -1,0 +1,31 @@
+---
+// 글 상세 페이지 — 동적 라우팅으로 각 글을 렌더링합니다.
+// [slug] 파라미터로 마크다운 파일을 매칭합니다.
+
+import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
+import { getCollection } from 'astro:content';
+
+// 정적 경로 생성 — 모든 초안 제외 글에 대해 페이지 생성
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts
+    .filter((post) => !post.data.draft)
+    .map((post) => ({
+      params: { slug: post.slug },
+      props: { post },
+    }));
+}
+
+// 현재 글 데이터
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+
+<BlogPostLayout
+  title={post.data.title}
+  description={post.data.description}
+  pubDate={post.data.pubDate}
+  tags={post.data.tags}
+>
+  <Content />
+</BlogPostLayout>

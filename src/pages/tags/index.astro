@@ -1,0 +1,49 @@
+---
+// 전체 태그 목록 페이지 — 사용 가능한 모든 태그를 표시합니다.
+// 각 태그를 클릭하면 해당 태그의 글 목록으로 이동합니다.
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TagBadge from '../../components/TagBadge.astro';
+import { getCollection } from 'astro:content';
+
+// 모든 글에서 고유 태그 추출
+const posts = (await getCollection('blog')).filter((post) => !post.data.draft);
+const allTags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
+---
+
+<BaseLayout title="태그 | Muita Blog" description="태그별 블로그 글 찾기">
+  <h1 class="page-title">태그</h1>
+
+  <div class="tags-grid">
+    {allTags.map((tag) => {
+      const count = posts.filter((post) => post.data.tags.includes(tag)).length;
+      return (
+        <a href={`/tags/${tag}`} class="tag-item">
+          <TagBadge tag={tag} />
+          <span class="tag-count">{count}개</span>
+        </a>
+      );
+    })}
+  </div>
+</BaseLayout>
+
+<style>
+  .tags-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-lg);
+    align-items: center;
+  }
+
+  .tag-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    text-decoration: none;
+  }
+
+  .tag-count {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+  }
+</style>

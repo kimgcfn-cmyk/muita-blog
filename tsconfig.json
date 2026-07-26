@@ -1,0 +1,4 @@
+{
+  // TypeScript 확장 설정 — Astro 기본 설정을 상속합니다.
+  "extends": "astro/tsconfigs/strict"
+}

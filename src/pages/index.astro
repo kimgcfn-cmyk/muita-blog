@@ -1,0 +1,90 @@
+---
+// 홈 페이지 — 최신 블로그 글을 5개 표시합니다.
+// 방문자가 블로그를 빠르게 파악할 수 있는 인트로 영역이 있습니다.
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BlogCard from '../components/BlogCard.astro';
+import { getCollection } from 'astro:content';
+
+// 발행일 기준 최신 글 5개 가져오기 (초안 제외)
+const posts = (await getCollection('blog'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 5);
+---
+
+<BaseLayout title="Muita Blog" description="개발과 기술에 대한 블로그">
+  {/* 인트로 영역 */}
+  <section class="hero">
+    <h1 class="hero-title">Muita Blog</h1>
+    <p class="hero-description">
+      개발, 기술, 그리고 일상에 대한 글을 쓰고 있습니다.
+    </p>
+  </section>
+
+  {/* 최근 글 목록 */}
+  <section class="recent-posts">
+    <h2 class="section-title">최근 글</h2>
+    <div class="posts-list">
+      {posts.map((post) => (
+        <BlogCard
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          tags={post.data.tags}
+          slug={post.slug}
+        />
+      ))}
+    </div>
+    <a href="/blog" class="view-all">전체 글 보기 &rarr;</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: var(--spacing-2xl) 0;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: var(--spacing-md);
+    background: linear-gradient(135deg, var(--color-accent), #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-description {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-lg);
+    color: var(--color-text);
+  }
+
+  .view-all {
+    display: inline-block;
+    margin-top: var(--spacing-lg);
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  /* 모바일 반응형 */
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 1.875rem;
+    }
+
+    .hero-description {
+      font-size: 1rem;
+    }
+  }
+</style>

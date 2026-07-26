@@ -1,0 +1,10 @@
+# 의존성 디렉토리
+node_modules/
+
+# Astro 빌드 출력
+dist/
+
+# 로컬 개발 환경 파일
+.env
+.env.*
+!.env.example

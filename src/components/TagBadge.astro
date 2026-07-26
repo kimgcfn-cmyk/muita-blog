@@ -1,0 +1,33 @@
+---
+// 태그 뱃지 컴포넌트 — 태그를 클릭 가능한 뱃지 형태로 표시합니다.
+// 태그 목록 페이지로 링크됩니다.
+
+interface Props {
+  tag: string;
+}
+
+const { tag } = Astro.props;
+---
+
+<a href={`/tags/${tag}`} class="tag-badge">
+  #{tag}
+</a>
+
+<style>
+  .tag-badge {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--color-tag-text);
+    background-color: var(--color-tag-bg);
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .tag-badge:hover {
+    background-color: var(--color-accent);
+    color: #ffffff;
+  }
+</style>

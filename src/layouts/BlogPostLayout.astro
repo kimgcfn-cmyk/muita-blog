@@ -1,0 +1,73 @@
+---
+// 블로그 글 상세 레이아웃 — 개별 글 페이지에서 사용합니다.
+// 글 제목, 발행일, 태그, 본문을 표시합니다.
+
+import BaseLayout from './BaseLayout.astro';
+import TagBadge from '../components/TagBadge.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags: string[];
+}
+
+const { title, description, pubDate, tags } = Astro.props;
+
+// 날짜 포맷 변환 (YYYY년 MM월 DD일)
+const formattedDate = pubDate.toLocaleDateString('ko-KR', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={title} description={description}>
+  <article>
+    {/* 글 헤더 영역 */}
+    <header class="post-header">
+      <h1 class="post-title">{title}</h1>
+      <time class="post-date" datetime={pubDate.toISOString()}>
+        {formattedDate}
+      </time>
+      {tags.length > 0 && (
+        <div class="post-tags">
+          {tags.map((tag) => <TagBadge tag={tag} />)}
+        </div>
+      )}
+    </header>
+
+    {/* 마크다운 본문 렌더링 */}
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+
+  <style>
+    .post-header {
+      margin-bottom: var(--spacing-2xl);
+      padding-bottom: var(--spacing-xl);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .post-title {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .post-date {
+      display: block;
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+    }
+  </style>
+</BaseLayout>

@@ -1,0 +1,83 @@
+---
+// 블로그 카드 컴포넌트 — 글 목록에서 각 글을 카드 형태로 표시합니다.
+// 제목, 날짜, 요약, 태그를 포함합니다.
+
+import TagBadge from './TagBadge.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags: string[];
+  slug: string;
+}
+
+const { title, description, pubDate, tags, slug } = Astro.props;
+
+// 날짜 포맷 (YYYY.MM.DD)
+const formattedDate = pubDate.toLocaleDateString('ko-KR', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+---
+
+<article class="blog-card">
+  <a href={`/blog/${slug}`} class="card-link">
+    <time class="card-date" datetime={pubDate.toISOString()}>
+      {formattedDate}
+    </time>
+    <h2 class="card-title">{title}</h2>
+    <p class="card-description">{description}</p>
+  </a>
+  {tags.length > 0 && (
+    <div class="card-tags">
+      {tags.map((tag) => <TagBadge tag={tag} />)}
+    </div>
+  )}
+</article>
+
+<style>
+  .blog-card {
+    padding: var(--spacing-lg) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .card-date {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-sm);
+    transition: color 0.2s ease;
+  }
+
+  .card-link:hover .card-title {
+    color: var(--color-accent);
+  }
+
+  .card-description {
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+</style>

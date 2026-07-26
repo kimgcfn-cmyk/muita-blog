@@ -1,0 +1,149 @@
+---
+// 네비게이션 헤더 컴포넌트 — 상단에 고정된 메뉴 바입니다.
+// 홈, 블로그, 소개 링크를 포함하며, 모바일 햄버거 메뉴를 지원합니다.
+
+const navItems = [
+  { href: '/', label: '홈' },
+  { href: '/blog', label: '블로그' },
+  { href: '/about', label: '소개' },
+];
+
+// 현재 활성 메뉴 하이라이팅용
+const currentPath = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    {/* 로고 / 사이트명 */}
+    <a href="/" class="site-logo">Muita Blog</a>
+
+    {/* 데스크톱 네비게이션 */}
+    <nav class="desktop-nav">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class:list={['nav-link', { active: currentPath === item.href }]}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    {/* 모바일 햄버거 버튼 */}
+    <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="메뉴 열기">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 12h18M3 6h18M3 18h18" />
+      </svg>
+    </button>
+  </div>
+
+  {/* 모바일 드롭다운 메뉴 */}
+  <nav class="mobile-nav" id="mobile-nav">
+    {navItems.map((item) => (
+      <a
+        href={item.href}
+        class:list={['mobile-nav-link', { active: currentPath === item.href }]}
+      >
+        {item.label}
+      </a>
+    ))}
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    backdrop-filter: blur(8px);
+    background-color: color-mix(in srgb, var(--color-bg) 85%, transparent);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-height);
+  }
+
+  .site-logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .site-logo:hover {
+    color: var(--color-accent);
+  }
+
+  .desktop-nav {
+    display: flex;
+    gap: var(--spacing-xl);
+  }
+
+  .nav-link {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    transition: color 0.2s ease;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--color-accent);
+  }
+
+  .mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text);
+    padding: var(--spacing-xs);
+  }
+
+  .mobile-nav {
+    display: none;
+    flex-direction: column;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .mobile-nav.open {
+    display: flex;
+  }
+
+  .mobile-nav-link {
+    padding: var(--spacing-sm) 0;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+  }
+
+  .mobile-nav-link:hover,
+  .mobile-nav-link.active {
+    color: var(--color-accent);
+  }
+
+  /* 모바일 반응형 */
+  @media (max-width: 768px) {
+    .desktop-nav {
+      display: none;
+    }
+
+    .mobile-menu-btn {
+      display: block;
+    }
+  }
+</style>
+
+<script>
+  // 모바일 메뉴 토GGLE 스크립트
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const mobileNav = document.getElementById('mobile-nav');
+
+  menuBtn?.addEventListener('click', () => {
+    mobileNav?.classList.toggle('open');
+  });
+</script>

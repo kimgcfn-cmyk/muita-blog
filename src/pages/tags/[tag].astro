@@ -1,0 +1,88 @@
+---
+// 특정 태그의 글 목록 페이지 — 태그로 필터링된 글을 표시합니다.
+// [tag] 파라미터로 태그 이름을 받습니다.
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import { getCollection } from 'astro:content';
+
+// 정적 경로 생성 — 사용된 모든 태그에 대해 페이지 생성
+export async function getStaticPaths() {
+  const posts = (await getCollection('blog')).filter(
+    (post) => !post.data.draft,
+  );
+  const allTags = [...new Set(posts.flatMap((post) => post.data.tags))];
+
+  return allTags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts
+        .filter((post) => post.data.tags.includes(tag))
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`#${tag} | Muita Blog`} description={`#${tag} 태그 관련 글`}>
+  <nav class="breadcrumb">
+    <a href="/tags">태그</a>
+    <span class="separator">&gt;</span>
+    <span class="current">#{tag}</span>
+  </nav>
+
+  <h1 class="page-title">#{tag}</h1>
+
+  <p class="tag-info">
+    총 <strong>{posts.length}</strong>개의 글
+  </p>
+
+  <div class="posts-list">
+    {posts.map((post) => (
+      <BlogCard
+        title={post.data.title}
+        description={post.data.description}
+        pubDate={post.data.pubDate}
+        tags={post.data.tags}
+        slug={post.slug}
+      />
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+  }
+
+  .breadcrumb a {
+    color: var(--color-text-secondary);
+  }
+
+  .breadcrumb a:hover {
+    color: var(--color-accent);
+  }
+
+  .separator {
+    color: var(--color-border);
+  }
+
+  .current {
+    color: var(--color-text);
+    font-weight: 500;
+  }
+
+  .tag-info {
+    margin-bottom: var(--spacing-xl);
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+  }
+</style>

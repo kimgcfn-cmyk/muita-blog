@@ -1,0 +1,57 @@
+---
+// 푸터 컴포넌트 — 하단 저작권 및 링크를 표시합니다.
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p class="copyright">
+      &copy; {new Date().getFullYear()} Muita Blog. Built with
+      <a href="https://astro.build" target="_blank" rel="noopener">Astro</a>.
+    </p>
+    <nav class="footer-links">
+      <a href="/rss.xml" target="_blank" rel="noopener">RSS</a>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--color-border);
+    padding: var(--spacing-xl) 0;
+    margin-top: auto;
+  }
+
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .copyright {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: var(--spacing-lg);
+  }
+
+  .footer-links a {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+
+  .footer-links a:hover {
+    color: var(--color-accent);
+  }
+
+  /* 모바일 반응형 */
+  @media (max-width: 768px) {
+    .footer-inner {
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      text-align: center;
+    }
+  }
+</style>

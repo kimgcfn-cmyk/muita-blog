@@ -1,0 +1,34 @@
+---
+// 기본 레이아웃 — 모든 페이지에서 사용하는 공통 레이아웃입니다.
+// HTML 구조, 헤더, 푸터, 글로벌 스타일을 포함합니다.
+
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+// 페이지 props
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Astro로 만든 블로그' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <Header />
+    <main class="container">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
