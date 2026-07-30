@@ -12,8 +12,8 @@ export async function GET(context: APIContext) {
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
   return rss({
-    title: 'Muita Blog',
-    description: '개발과 기술에 대한 블로그',
+    title: '다솜재무센터',
+    description: '쉽고 친절한 금융상식 블로그',
     site: context.site!,
     items: posts.map((post) => ({
       title: post.data.title,

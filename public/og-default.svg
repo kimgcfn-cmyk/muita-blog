@@ -1,0 +1,11 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3a5f"/>
+      <stop offset="100%" style="stop-color:#0d2137"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <text x="600" y="290" font-family="AppleSDGothicNeo, sans-serif" font-size="72" font-weight="700" fill="white" text-anchor="middle">다솜재무센터</text>
+  <text x="600" y="360" font-family="AppleSDGothicNeo, sans-serif" font-size="28" fill="#8899aa" text-anchor="middle">쉽고 친절한 금융상식</text>
+</svg>

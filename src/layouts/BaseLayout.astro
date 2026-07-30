@@ -6,13 +6,19 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 
+const SITE_TITLE = '다솜재무센터';
+
 // 페이지 props
 interface Props {
   title: string;
   description?: string;
+  image?: string;
 }
 
-const { title, description = '다솜재무센터 금융 블로그' } = Astro.props;
+const { title, description = '다솜재무센터 금융 블로그', image = '/og-default.svg' } = Astro.props;
+const origin = Astro.url.origin;
+const ogImage = image.startsWith('http') ? image : `${origin}${image}`;
+const pageUrl = `${origin}${Astro.url.pathname}`;
 ---
 
 <!doctype html>
@@ -23,6 +29,14 @@ const { title, description = '다솜재무센터 금융 블로그' } = Astro.pro
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+    <!-- Open Graph / 카카오톡 / 페이스북 등 공유 미리보기 -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_TITLE} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <Header />

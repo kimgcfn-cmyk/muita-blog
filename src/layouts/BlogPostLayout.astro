@@ -10,9 +10,10 @@ interface Props {
   description: string;
   pubDate: Date;
   tags: string[];
+  image?: string;
 }
 
-const { title, description, pubDate, tags } = Astro.props;
+const { title, description, pubDate, tags, image } = Astro.props;
 
 // 날짜 포맷 변환 (YYYY년 MM월 DD일)
 const formattedDate = pubDate.toLocaleDateString('ko-KR', {
@@ -22,7 +23,7 @@ const formattedDate = pubDate.toLocaleDateString('ko-KR', {
 });
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} image={image}>
   <article>
     {/* 글 헤더 영역 */}
     <header class="post-header">
