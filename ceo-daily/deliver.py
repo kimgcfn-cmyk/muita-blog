@@ -28,6 +28,7 @@ def to_discord(cards: list, webhook: str) -> None:
                 {"name": "무슨 일", "value": c["what"][:900]},
                 {"name": "대표님께 쓸 한마디", "value": c["ceo_line"][:900]},
                 {"name": "오늘의 액션", "value": c["action"][:900]},
+                {"name": "원문", "value": f"[기사 보기]({c['url']})"[:900]},
             ],
             "footer": {"text": f"{c.get('source', '')} · {FOOTER}"[:2000]},
         })
