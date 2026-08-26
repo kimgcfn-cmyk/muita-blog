@@ -1,0 +1,43 @@
+name: 법인대표 데일리
+
+on:
+  schedule:
+    - cron: "0 22 * * 0-4"    # UTC 22:00 = KST 익일 07:00 (월~금 발송)
+  workflow_dispatch:           # 수동 실행 버튼
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    working-directory: ceo-daily   # 블로그 레포 안의 하위 폴더에서 실행
+
+jobs:
+  brief:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: ceo-daily/requirements.txt
+
+      - run: pip install -r requirements.txt
+
+      - name: Run brief
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python main.py
+
+      - name: Commit state & archive
+        run: |
+          git config user.name  "ceo-daily-bot"
+          git config user.email "actions@github.com"
+          git add state archive
+          git diff --staged --quiet && exit 0
+          git commit -m "brief $(date -u +%Y-%m-%d) [skip ci]"
+          git pull --rebase --autostash
+          git push

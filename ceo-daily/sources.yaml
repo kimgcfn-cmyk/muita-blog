@@ -1,0 +1,115 @@
+# ─────────────────────────────────────────────
+# 수집 소스 목록
+# type: rss | html
+# tier: A(공공/1차) B(언론/2차)  → 판정 시 A를 우선 채택
+#
+# ⚠️ 아래 URL은 "후보"입니다. 최초 1회 `python verify_sources.py` 를 돌려서
+#    살아있는 것만 남기세요. 정부 사이트는 RSS 경로가 자주 바뀝니다.
+# ─────────────────────────────────────────────
+
+sources:
+  # ── A티어: 공공기관 1차 자료 ──────────────
+
+  # [2026-08-26 확인] moef.go.kr → mofe.go.kr 로 도메인 변경 + RSS 경로 자체가 바뀜.
+  # 아래는 2026-08-26 기준 실제 동작 확인한 주소.
+  - name: 기획재정부 보도자료
+    type: rss
+    tier: A
+    url: https://mofe.go.kr/com/detailRssTagService.do?bbsId=MOSFBBS_000000000028
+
+  # [2026-08-26 확인] 옛 RSS(lawPromulgation.rss)는 죽음. 게시판 HTML로 대체.
+  # 셀렉터가 실제 기사 링크(act=view)만 골라내므로 javascript: 메뉴 링크는 자동 제외됨.
+  - name: 법제처 보도자료
+    type: html
+    tier: A
+    url: https://moleg.go.kr/board.es?bid=0048&mid=a10501000000
+    selector: "table a[href*='act=view']"
+    base: https://moleg.go.kr
+
+  # [2026-08-26 확인] 국세청 사이트 개편으로 RSS 소멸 + 목록이 javascript:; onclick으로만
+  # 링크돼 있어(실제 href 없음) 일반 href 방식으론 못 긁음.
+  # collect.py의 fetch_html()에 id_attr → link_template 조합 기능을 추가해서 대응함:
+  # <a class="nttInfoBtn" data-id="1354418" href="javascript:;"> 의 data-id 값을
+  # 상세페이지 URL(selectNttInfo.do?nttSn=...) 에 꽂아 넣는다.
+  - name: 국세청 보도자료
+    type: html
+    tier: A
+    url: https://www.nts.go.kr/nts/na/ntt/selectNttList.do?mi=2201&bbsId=1028
+    selector: "a.nttInfoBtn[data-id]"
+    id_attr: "data-id"
+    link_template: "https://www.nts.go.kr/nts/na/ntt/selectNttInfo.do?mi=2201&bbsId=1028&nttSn={id}"
+
+  # [2026-08-26 확인] mss.go.kr도 사이트 개편(cbIdx 체계)으로 옛 RSS 경로 소멸.
+  # 목록은 <tr onclick="doBbsFView('86','1070729',...)"> 형태라 id_regex로 두 번째
+  # 인자(게시글 번호)를 뽑아 상세페이지 URL(View.do?cbIdx=86&bcIdx=...)에 꽂는다.
+  - name: 중소벤처기업부 보도자료
+    type: html
+    tier: A
+    url: https://www.mss.go.kr/site/smba/ex/bbs/List.do?cbIdx=86
+    selector: "tr[onclick*='doBbsFView']"
+    id_regex: "doBbsFView\\('\\d+','(\\d+)'"
+    link_template: "https://www.mss.go.kr/site/smba/ex/bbs/View.do?cbIdx=86&bcIdx={id}"
+
+  # [2026-08-26 확인, 비활성화] tt.go.kr은 통째로 JS(SPA)로 렌더링되는 목록이라
+  # requests+BeautifulSoup으로는 애초에 항목이 안 보임(정적 HTML에 내용 없음).
+  # 스크래핑하려면 Selenium/Playwright 같은 헤드리스 브라우저가 필요 — 이 경량 스크립트 범위 밖.
+  # - name: 조세심판원 주요결정
+  #   type: html
+  #   tier: A
+  #   url: https://www.tt.go.kr/mgr/main/mainPage.do
+  #   selector: "a.board-link"
+  #   base: https://www.tt.go.kr
+
+  # ── B티어: 언론 ───────────────────────────
+
+  # [2026-08-26 확인, 비활성화] 모든 hankyung.com/feed/* 경로가 Cloudflare 챌린지(403,
+  # "Just a moment...")로 막힘. GitHub Actions IP도 동일하게 차단될 가능성이 높음.
+  # - name: 한국경제 경제/세무
+  #   type: rss
+  #   tier: B
+  #   url: https://www.hankyung.com/feed/economy
+
+  - name: 매일경제 경제
+    type: rss
+    tier: B
+    url: https://www.mk.co.kr/rss/30100041/
+
+  # [2026-08-26 확인] joseilbo.com → joseilbo.co.kr 로 도메인 변경 + 경로도 바뀜(rss_tax.php).
+  - name: 조세일보
+    type: rss
+    tier: B
+    url: http://www.joseilbo.co.kr/Contents/rss/rss_tax.php
+
+  # [2026-08-26 확인] 옛 경로(allArticle.xml)는 404. 실제 주소는 /data/rss/news.xml.
+  - name: 세정신문
+    type: rss
+    tier: B
+    url: https://www.taxtimes.co.kr/data/rss/news.xml
+
+
+# 1차 키워드 필터 (여기 안 걸리면 Claude API로 넘기지 않음 = 토큰 절약)
+keywords:
+  - 가지급금
+  - 명의신탁
+  - 차명주식
+  - 임원 퇴직금
+  - 임원보수
+  - 이익잉여금
+  - 배당소득
+  - 비상장주식
+  - 주식 평가
+  - 가업상속
+  - 가업승계
+  - 증여세
+  - 상속세
+  - 법인세
+  - 정관
+  - 주주총회
+  - 자기주식
+  - 중대재해
+  - 연대보증
+  - 세법개정
+  - 시행령
+  - 국세청
+  - 심판례
+  - 대표이사

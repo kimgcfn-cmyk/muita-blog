@@ -1,0 +1,6 @@
+# 법인대표 데일리 브리핑 의존성
+feedparser>=6.0.11      # RSS 파싱
+requests>=2.32.0        # HTML 수집 · Discord 웹훅 전송
+PyYAML>=6.0.2           # sources.yaml 로드
+beautifulsoup4>=4.12.3  # HTML 파싱 · RSS 요약 태그 제거
+anthropic>=0.40.0       # Claude 판정
