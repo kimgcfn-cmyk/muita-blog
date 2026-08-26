@@ -33,5 +33,7 @@ jobs:
           git config user.name  "ceo-daily-bot"
           git config user.email "actions@github.com"
           git add ceo-daily/state ceo-daily/archive
-          git diff --staged --quiet || git commit -m "brief $(date -u +%Y-%m-%d)"
+          git diff --staged --quiet && exit 0
+          git commit -m "brief $(date -u +%Y-%m-%d) [skip ci]"
+          git pull --rebase --autostash
           git push
