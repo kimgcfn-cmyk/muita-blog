@@ -54,7 +54,7 @@ def judge(items: list) -> list:
     try:
         resp = client.messages.create(
             model=MODEL,
-            max_tokens=2000,
+            max_tokens=4000,
             system=_load_system(),
             messages=[{
                 "role": "user",
@@ -71,7 +71,9 @@ def judge(items: list) -> list:
     try:
         cards = _extract_json(text)
     except Exception as exc:  # noqa: BLE001
+        # stop_reason이 "max_tokens"면 응답이 잘려서 파싱이 실패한 것 — 늘려야 할 신호.
         print(f"  [error] 파싱 실패 → 오늘은 건너뜀: {exc}")
+        print(f"  [debug] stop_reason={resp.stop_reason}, 응답 길이={len(text)}자")
         return []
 
     return _sanitize(cards)
