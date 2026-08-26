@@ -8,10 +8,6 @@ on:
 permissions:
   contents: write
 
-defaults:
-  run:
-    working-directory: ceo-daily   # 블로그 레포 안의 하위 폴더에서 실행
-
 jobs:
   brief:
     runs-on: ubuntu-latest
@@ -22,22 +18,20 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: ceo-daily/requirements.txt
 
-      - run: pip install -r requirements.txt
+      - run: pip install -r ceo-daily/requirements.txt
 
       - name: Run brief
+        working-directory: ceo-daily
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY_CEO }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL_CEO }}
         run: python main.py
 
       - name: Commit state & archive
         run: |
           git config user.name  "ceo-daily-bot"
           git config user.email "actions@github.com"
-          git add state archive
-          git diff --staged --quiet && exit 0
-          git commit -m "brief $(date -u +%Y-%m-%d) [skip ci]"
-          git pull --rebase --autostash
+          git add ceo-daily/state ceo-daily/archive
+          git diff --staged --quiet || git commit -m "brief $(date -u +%Y-%m-%d)"
           git push
