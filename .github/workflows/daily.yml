@@ -1,9 +1,10 @@
 name: 법인대표 데일리
 
 on:
-  schedule:
-    - cron: "0 22 * * 0-4"    # UTC 22:00 = KST 익일 07:00 (월~금 발송)
-  workflow_dispatch:           # 수동 실행 버튼
+  # 스케줄은 외부 크론 서비스(cron-job.org 등)가 07:00 KST 정각에
+  # workflow_dispatch API를 호출해서 대신 트리거한다.
+  # GitHub 자체 schedule:은 정확한 시각을 보장하지 않아(2026-08-27 최대 5시간 지연 확인) 뺐다.
+  workflow_dispatch:           # 수동 실행 버튼 + 외부 크론이 이걸 호출함
 
 permissions:
   contents: write
