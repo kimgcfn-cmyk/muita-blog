@@ -2,6 +2,7 @@
 import hashlib
 import json
 import os
+import re
 from datetime import datetime, timedelta, timezone
 
 import feedparser
@@ -49,8 +50,10 @@ def _recent(entry, days: int) -> bool:
 def fetch_rss(src: dict, days: int) -> list:
     # feedparser.parse(url) 은 자체 타임아웃이 없어 죽은 서버를 만나면
     # 무한정 대기할 수 있다. requests로 먼저 받아 타임아웃을 강제한다.
+    # 국내 정부 사이트는 해외 러너(GitHub Actions)에서 접속 시 TLS 핸드셰이크에만
+    # 8초 넘게 걸리는 경우가 있어(2026-08-27 실제 타임아웃 확인) 15초로 여유를 둔다.
     try:
-        r = requests.get(src["url"], headers=UA, timeout=8)
+        r = requests.get(src["url"], headers=UA, timeout=15)
         r.raise_for_status()
         feed = feedparser.parse(r.content)
     except Exception as exc:  # noqa: BLE001
@@ -71,9 +74,29 @@ def fetch_rss(src: dict, days: int) -> list:
     return items
 
 
+def _resolve_link(el, src: dict) -> str:
+    """목록이 실제 href 없이 JS onclick으로만 상세페이지를 여는 사이트용 대안 경로.
+
+    sources.yaml에 link_template("...{id}...")이 있으면 아래 순서로 ID를 찾아 채운다.
+      - id_attr : 요소 속성에 ID가 그대로 있는 경우 (예: 국세청 data-id="1354418")
+      - id_regex: onclick 문자열에서 정규식 첫 캡처그룹으로 뽑는 경우 (예: 중기부 doBbsFView('86','1070729',...))
+    link_template이 없는 소스는 기존처럼 href를 그대로 쓴다(법제처 등).
+    """
+    template = src.get("link_template")
+    if not template:
+        return el.get("href", "")
+    item_id = ""
+    if src.get("id_attr"):
+        item_id = el.get(src["id_attr"], "")
+    elif src.get("id_regex"):
+        m = re.search(src["id_regex"], el.get("onclick", "") or "")
+        item_id = m.group(1) if m else ""
+    return template.format(id=item_id) if item_id else ""
+
+
 def fetch_html(src: dict, days: int) -> list:
     try:
-        r = requests.get(src["url"], headers=UA, timeout=8)
+        r = requests.get(src["url"], headers=UA, timeout=15)
         r.raise_for_status()
     except Exception as exc:  # noqa: BLE001
         print(f"  [warn] {src['name']} HTML 수집 실패: {exc}")
@@ -81,14 +104,16 @@ def fetch_html(src: dict, days: int) -> list:
     soup = BeautifulSoup(r.text, "html.parser")
     base = src.get("base", "")
     items = []
-    for a in soup.select(src.get("selector", "a"))[:40]:
-        href = a.get("href", "")
+    for el in soup.select(src.get("selector", "a"))[:40]:
+        href = _resolve_link(el, src)
         if not href or href.startswith("#"):
             continue
+        # title 속성이 있으면 우선 사용(줄바꿈·공백 없는 깔끔한 제목), 없으면 텍스트에서 뽑는다.
+        title = (el.get("title") or el.get_text(" ", strip=True))[:200]
         items.append({
             "source": src["name"],
             "tier": src["tier"],
-            "title": a.get_text(" ", strip=True)[:200],
+            "title": title,
             "summary": "",
             "url": href if href.startswith("http") else base + href,
         })
