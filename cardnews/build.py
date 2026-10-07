@@ -51,77 +51,119 @@ S = [
 ]
 
 CSS = """
+@font-face{font-family:NK;font-weight:300;src:url('../fonts/Light.otf')}
 @font-face{font-family:NK;font-weight:400;src:url('../fonts/r.otf')}
 @font-face{font-family:NK;font-weight:500;src:url('../fonts/m.otf')}
 @font-face{font-family:NK;font-weight:700;src:url('../fonts/n.otf')}
+@font-face{font-family:NK;font-weight:900;src:url('../fonts/Black.otf')}
 *{box-sizing:border-box;margin:0;padding:0}
-body{width:1080px;height:1080px;font-family:NK,sans-serif;color:#1B2A4A;background:#F7F4EC;position:relative;overflow:hidden;word-break:keep-all}
-.bar{position:absolute;left:0;top:0;width:100%;height:14px;background:var(--ac)}
-.head{position:absolute;left:80px;right:80px;top:56px;display:flex;justify-content:space-between;font-size:26px;font-weight:500;color:#7a8394}
-.head b{color:#1B2A4A;font-weight:700}
-.main{position:absolute;left:80px;right:80px;top:130px;bottom:120px;display:flex;flex-direction:column;justify-content:center}
-.foot{position:absolute;left:80px;right:80px;bottom:44px;display:flex;justify-content:space-between;font-size:24px;color:#8b93a1}
-.dots i{display:inline-block;width:14px;height:14px;border-radius:50%;background:#d8d3c4;margin-left:8px}
-.dots i.on{background:var(--ac);width:34px;border-radius:8px}
-h1{font-weight:700;line-height:1.28;letter-spacing:-1px}
-.line{font-size:34px;line-height:1.5;color:#4a5468;margin-top:26px;font-weight:500}
-.ac{color:var(--ac)}
-.tag{display:inline-block;align-self:flex-start;background:#1B2A4A;color:#fff;font-size:32px;font-weight:500;padding:12px 28px;border-radius:40px;margin-bottom:36px}
-.items{margin-top:36px;display:flex;flex-direction:column;gap:14px}
-.it{display:flex;align-items:center;gap:24px;background:#fff;border-radius:22px;padding:20px 32px;font-size:37px;font-weight:500;box-shadow:0 4px 14px rgba(27,42,74,.07)}
-.it .n{flex:none;width:58px;height:58px;border-radius:50%;background:var(--ac);color:#fff;font-weight:700;font-size:30px;display:flex;align-items:center;justify-content:center}
-.it .d{flex:none;width:16px;height:16px;border-radius:50%;background:var(--ac)}
-.bub{background:#fff;border-radius:34px 34px 34px 6px;padding:34px 40px;font-size:37px;font-weight:500;line-height:1.4;box-shadow:0 4px 14px rgba(27,42,74,.08);border:3px solid var(--ac);max-width:920px}
-.bub:nth-child(even){align-self:flex-end;border-radius:34px 34px 6px 34px}
-.bubs{display:flex;flex-direction:column;gap:30px;margin-top:56px}
-.cmp{display:flex;gap:28px;margin-top:48px}
-.cmp>div{flex:1;background:#fff;border-radius:26px;padding:40px 34px;box-shadow:0 4px 14px rgba(27,42,74,.08)}
-.cmp h3{font-size:42px;color:#fff;background:var(--ac);display:inline-block;padding:8px 22px;border-radius:14px;margin-bottom:26px}
-.cmp:last-child{}
-.cmp p{font-size:36px;line-height:1.55;font-weight:500}
-.cmp>div:last-child h3{background:#1B2A4A}
-.closeb{background:#1B2A4A;color:#fff}
-.closeb .head{color:#9aa4b8}.closeb .head b{color:#fff}
-.closeb .foot{color:#7d879c}.closeb .dots i{background:#3b4a6b}.closeb .dots i.on{background:var(--ac)}
-.closeb .line{color:#d5dae6}
-.tags{margin-top:44px;font-size:32px;color:var(--ac);font-weight:500;line-height:1.8}
-.note{position:absolute;left:0;right:0;bottom:0;font-size:23px;color:#aab3c6;line-height:1.5;border-top:1px solid #3b4a6b;padding-top:16px}
-.rule{width:90px;height:8px;background:var(--ac);border-radius:4px;margin-bottom:34px}
+:root{--lime:#B8E80C;--ink:#0d2b1a;--black:#0a0a0a;--org:#FF7A1A}
+body{width:1080px;height:1080px;font-family:NK,sans-serif;position:relative;overflow:hidden;word-break:keep-all}
+body.lime{background:var(--lime);color:var(--ink)}
+body.black{background:#050505;color:#fff}
+body.green{background:linear-gradient(180deg,#04463a 0%,#1f9a68 60%,#4ccf86 100%);color:#fff}
+.hd{position:absolute;left:60px;right:60px;top:52px;display:flex;justify-content:space-between;font-size:25px;font-weight:300;letter-spacing:4px;text-transform:uppercase}
+.lime .hd{padding-bottom:22px;border-bottom:2px solid var(--ink);justify-content:center;letter-spacing:5px}
+.black .hd{color:var(--lime)}
+.green .hd{color:#d7fbe6}
+.main{position:absolute;left:60px;right:60px;top:140px;bottom:110px;display:flex;flex-direction:column;justify-content:center;z-index:2}
+.ft{position:absolute;left:60px;right:60px;bottom:44px;display:flex;justify-content:space-between;align-items:center;font-size:24px;font-weight:500;z-index:2}
+.lime .ft{color:#3d5a14}.black .ft{color:#b9c97a}.green .ft{color:#d7fbe6}
+.dots i{display:inline-block;width:14px;height:14px;border-radius:50%;margin-left:10px;border:2px solid currentColor;opacity:.55}
+.dots i.on{background:currentColor;opacity:1}
+h1{font-weight:900;line-height:1.22;letter-spacing:-2px}
+h1 .l{font-weight:300}
+.lime h1{color:var(--ink)}.black h1{color:var(--lime)}.green h1{color:#fff}
+.line{font-size:34px;line-height:1.5;font-weight:400;margin-top:26px}
+.lime .line{color:#27441b}.black .line{color:#e8f5b0}.green .line{color:#d7fbe6}
+.tag{align-self:flex-start;border:2px solid var(--lime);color:var(--lime);font-size:30px;font-weight:500;padding:10px 28px;border-radius:40px;margin-bottom:32px}
+.dot{position:absolute;border-radius:50%;z-index:1;
+ background-image:radial-gradient(circle,var(--c,#B8E80C) 0 3.2px,transparent 3.8px);background-size:16px 16px;
+ -webkit-mask-image:radial-gradient(circle,#000 25%,transparent 72%);mask-image:radial-gradient(circle,#000 25%,transparent 72%)}
+.ring{position:absolute;border-radius:50%;border:2px solid var(--ink);z-index:1}
+.pill{background:var(--black);color:var(--lime);border-radius:70px;padding:24px 44px;font-size:37px;font-weight:500;text-align:center;line-height:1.35}
+.pills{display:flex;flex-direction:column;gap:16px;margin-top:44px}
+.pills .pill:nth-child(odd){margin-right:40px}.pills .pill:nth-child(even){margin-left:40px}
+.opill{background:var(--org);color:#0a0a0a;border-radius:70px;padding:20px 40px;font-size:38px;font-weight:900;align-self:flex-start;line-height:1.3}
+.ocol{display:flex;flex-direction:column;gap:20px;margin-top:40px}
+.ocol .opill:nth-child(even){align-self:flex-end}
+.bub{background:#2f3d05;color:#eef7c4;border-radius:14px;padding:26px 36px;font-size:36px;font-weight:300;line-height:1.4;max-width:820px}
+.bubs{display:flex;flex-direction:column;gap:24px;margin-top:52px}
+.bub:nth-child(even){align-self:flex-end}
+.bub:nth-child(odd){align-self:flex-start}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:44px}
+.tile{background:rgba(255,255,255,.9);color:#0d3b2c;border-radius:4px;padding:34px 28px;min-height:210px;display:flex;flex-direction:column;justify-content:space-between}
+.tile b{font-size:30px;font-weight:900;color:#1f9a68;letter-spacing:2px}
+.tile span{font-size:35px;font-weight:700;line-height:1.35}
+.rows{display:flex;flex-direction:column;gap:18px;margin-top:40px}
+.row{display:flex;align-items:center;gap:26px;background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.35);border-radius:70px;padding:16px 40px 16px 18px;font-size:37px;font-weight:700}
+.row .c{flex:none;min-width:96px;height:80px;border-radius:50px;background:#58e69f;color:#05392c;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:28px;padding:0 20px}
+.cmp{display:flex;gap:26px;margin-top:44px}
+.cmp>div{flex:1;background:rgba(255,255,255,.92);color:#0d3b2c;border-radius:6px;padding:36px 30px}
+.cmp h3{display:inline-block;font-size:38px;font-weight:900;padding:10px 24px;border-radius:50px;background:var(--black);color:var(--lime);margin-bottom:24px}
+.cmp>div:last-child h3{background:var(--org);color:#0a0a0a}
+.cmp p{font-size:34px;line-height:1.55;font-weight:500}
+.hash{display:flex;flex-wrap:wrap;gap:16px;margin-top:40px}
+.hash span{background:#58e69f;color:#05392c;border-radius:60px;padding:14px 30px;font-size:30px;font-weight:700}
+.logo{display:flex;align-items:center;gap:12px;justify-content:center;font-weight:700;letter-spacing:2px}
+.note{margin-top:40px;font-size:23px;line-height:1.5;color:#c8f3dc;border-top:1px solid rgba(255,255,255,.35);padding-top:16px;font-weight:300}
+.ring2{position:absolute;border-radius:50%;border:2px solid rgba(255,255,255,.28);z-index:1}
 """
-def size(title, base):
-    n = max(len(x.strip()) for x in title.split("/"))
-    return base if n<=11 else base-6 if n<=14 else base-14 if n<=17 else base-22 if n<=22 else base-30
+STAR='<svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l2.4 8.2L22 5l-4.6 7 6.6 5-8.3.2L12 24l-3.7-6.8L0 17l6.6-5L2 5l7.6 3.2z"/></svg>'
+
+def title(t, size, light_last=False):
+    parts=[x.strip() for x in t.split("/")]
+    return "<br>".join(E(p) for p in parts)
+
+def fs(t, base):
+    n = max(len(x.strip()) for x in t.split("/"))
+    return base if n<=9 else base-8 if n<=12 else base-16 if n<=15 else base-24 if n<=18 else base-32 if n<=23 else base-40
 
 def card(si, ci, st):
-    name, ac, cards = st
-    c = cards[ci]; k = c["k"]; cls = "closeb" if k=="close" else ""
+    name, _, cards = st
+    c = cards[ci]; k = c["k"]
+    theme = {"cover":"black","bubbles":"lime","close":"green","compare":"green","steps":"green"}.get(k)
+    if k=="list": theme = "green" if ci==2 else "lime"
     dots = "".join('<i class="on"></i>' if i==ci else "<i></i>" for i in range(5))
-    body = ""
+    hd = '<div class="hd"><span>Cheongdam Star Clinic</span>' + ('' if theme=="lime" else '<span>Plastic Surgery</span>') + '</div>'
+    deco = ""; body = ""
     if k=="cover":
-        its = "".join(f'<div class="it"><span class="n">{i+1}</span>{E(t)}</div>' for i,t in enumerate(c["items"]))
-        body = f'<div class="tag">{E(c["tag"])}</div><h1 style="font-size:{size(c["title"],104)}px">{br(c["title"])}</h1><div class="line">{E(c["line"])}</div><div class="items">{its}</div>'
+        deco = '<div class="dot" style="right:-220px;bottom:60px;width:560px;height:560px"></div>'
+        its = "".join(f'<div class="opill">{E(t)}</div>' for t in c["items"])
+        body = f'<div class="tag">{E(c["tag"])}</div><h1 style="font-size:{fs(c["title"],112)}px">{title(c["title"],0)}</h1><div class="line">{E(c["line"])}</div><div class="ocol">{its}</div>'
     elif k=="bubbles":
+        deco = '<div class="ring" style="right:-90px;top:250px;width:380px;height:380px"></div><div class="dot" style="--c:#2f3d05;left:-220px;bottom:70px;width:420px;height:420px"></div>'
         its = "".join(f'<div class="bub">{E(t)}</div>' for t in c["items"])
-        body = f'<div class="rule"></div><h1 style="font-size:{size(c["title"],80)}px">{br(c["title"])}</h1><div class="bubs">{its}</div>'
-    elif k=="list":
-        its = "".join(f'<div class="it"><span class="d"></span>{E(t)}</div>' for t in c["items"])
+        body = f'<h1 style="font-size:{fs(c["title"],84)}px">{title(c["title"],0)}</h1><div class="bubs">{its}</div>'
+    elif k=="list" and theme=="lime":
+        deco = '<div class="dot" style="--c:#2f3d05;left:-170px;top:480px;width:420px;height:420px"></div>'
+        its = "".join(f'<div class="pill">{E(t)}</div>' for t in c["items"])
         line = f'<div class="line">{E(c["line"])}</div>' if c.get("line") else ""
-        body = f'<div class="rule"></div><h1 style="font-size:{size(c["title"],80)}px">{br(c["title"])}</h1>{line}<div class="items">{its}</div>'
+        body = f'<h1 style="font-size:{fs(c["title"],80)}px">{title(c["title"],0)}</h1>{line}<div class="pills">{its}</div>'
+    elif k=="list":
+        line = f'<div class="line">{E(c["line"])}</div>' if c.get("line") else ""
+        deco = '<div class="dot" style="--c:#c9ffe0;right:-140px;top:60px;width:420px;height:420px;opacity:.5"></div>'
+        if len(c["items"])==4:
+            its = "".join(f'<div class="tile"><b>0{i+1}</b><span>{E(t)}</span></div>' for i,t in enumerate(c["items"]))
+            body = f'<h1 style="font-size:{fs(c["title"],80)}px">{title(c["title"],0)}</h1>{line}<div class="tiles">{its}</div>'
+        else:
+            its = "".join(f'<div class="row"><span class="c">0{i+1}</span>{E(t)}</div>' for i,t in enumerate(c["items"]))
+            body = f'<h1 style="font-size:{fs(c["title"],80)}px">{title(c["title"],0)}</h1>{line}<div class="rows">{its}</div>'
     elif k=="steps":
-        its = "".join(f'<div class="it"><span class="n" style="width:auto;padding:0 22px;height:56px;border-radius:30px;font-size:26px;white-space:nowrap">STEP {n}</span>{E(t)}</div>' for n,t in c["items"])
-        body = f'<div class="rule"></div><h1 style="font-size:84px">{br(c["title"])}</h1><div class="items">{its}</div>'
+        deco = '<div class="ring2" style="right:-160px;top:-60px;width:520px;height:520px"></div>'
+        its = "".join(f'<div class="row"><span class="c" style="font-size:26px">STEP {n}</span>{E(t)}</div>' for n,t in c["items"])
+        body = f'<h1 style="font-size:84px">{title(c["title"],0)}</h1><div class="rows">{its}</div>'
     elif k=="compare":
-        a,b = c["a"],c["b"]
-        body = f'<div class="rule"></div><h1 style="font-size:84px">{br(c["title"])}</h1><div class="cmp"><div><h3>{E(a[0])}</h3><p>{E(a[1])}</p></div><div><h3>{E(b[0])}</h3><p>{E(b[1])}</p></div></div>'
+        a,b=c["a"],c["b"]
+        body = f'<h1 style="font-size:84px">{title(c["title"],0)}</h1><div class="cmp"><div><h3>{E(a[0])}</h3><p>{E(a[1])}</p></div><div><h3>{E(b[0])}</h3><p>{E(b[1])}</p></div></div>'
     elif k=="close":
-        extra = f'<div class="tags">{E(c["tags"])}</div>' if c.get("tags") else ""
+        deco = '<div class="ring2" style="left:-200px;bottom:-200px;width:620px;height:620px"></div><div class="ring2" style="right:-120px;top:-100px;width:420px;height:420px"></div>'
+        hash_ = '<div class="hash">'+"".join(f'<span>{E(h)}</span>' for h in c["tags"].split())+'</div>' if c.get("tags") else ""
         note = f'<div class="note">{E(c["note"])}</div>' if c.get("note") else ""
-        body = f'<div class="rule"></div><h1 style="font-size:{size(c["title"],84)}px">{br(c["title"])}</h1><div class="line">{E(c["line"])}</div>{extra}{note}'
-    h = f'''<!doctype html><html lang="ko"><head><meta charset="utf-8"><style>:root{{--ac:{ac}}}{CSS}</style></head>
-<body class="{cls}"><div class="bar"></div>
-<div class="head"><b>청담별의원</b><span>{si+1} / 6 · {E(name)}</span></div>
-<div class="main">{body}</div>
-<div class="foot"><span>종아리신경차단</span><span class="dots">{dots}</span></div></body></html>'''
+        body = f'<h1 style="font-size:{fs(c["title"],86)}px">{title(c["title"],0)}</h1><div class="line">{E(c["line"])}</div>{hash_}{note}'
+    ft = f'<div class="ft"><span class="logo">{STAR} CHEONGDAM STAR CLINIC</span><span class="dots">{dots}</span></div>' if theme!="lime" else f'<div class="ft"><span>{si+1} / 6 · {E(name)}</span><span class="dots">{dots}</span></div>'
+    h = f'''<!doctype html><html lang="ko"><head><meta charset="utf-8"><style>{CSS}</style></head>
+<body class="{theme}">{deco}{hd}<div class="main">{body}</div>{ft}</body></html>'''
     fn = f"set{si+1}_card{ci+1}.html"
     open(os.path.join(OUT, fn), "w", encoding="utf-8").write(h)
     return fn
