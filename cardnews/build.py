@@ -50,7 +50,7 @@ S = [
  ]),
 ]
 
-CSS = """
+CSS1 = """
 @font-face{font-family:NK;font-weight:300;src:url('../fonts/Light.otf')}
 @font-face{font-family:NK;font-weight:400;src:url('../fonts/r.otf')}
 @font-face{font-family:NK;font-weight:500;src:url('../fonts/m.otf')}
@@ -119,7 +119,7 @@ def fs(t, base):
     n = max(len(x.strip()) for x in t.split("/"))
     return base if n<=9 else base-8 if n<=12 else base-16 if n<=15 else base-24 if n<=18 else base-32 if n<=23 else base-40
 
-def card(si, ci, st):
+def card1(si, ci, st, _=False):
     name, _, cards = st
     c = cards[ci]; k = c["k"]
     theme = {"cover":"black","bubbles":"lime","close":"green","compare":"green","steps":"green"}.get(k)
@@ -162,12 +162,194 @@ def card(si, ci, st):
         note = f'<div class="note">{E(c["note"])}</div>' if c.get("note") else ""
         body = f'<h1 style="font-size:{fs(c["title"],86)}px">{title(c["title"],0)}</h1><div class="line">{E(c["line"])}</div>{hash_}{note}'
     ft = f'<div class="ft"><span class="logo">{STAR} CHEONGDAM STAR CLINIC</span><span class="dots">{dots}</span></div>' if theme!="lime" else f'<div class="ft"><span>{si+1} / 6 · {E(name)}</span><span class="dots">{dots}</span></div>'
-    h = f'''<!doctype html><html lang="ko"><head><meta charset="utf-8"><style>{CSS}</style></head>
+    h = f'''<!doctype html><html lang="ko"><head><meta charset="utf-8"><style>{CSS1}</style></head>
 <body class="{theme}">{deco}{hd}<div class="main">{body}</div>{ft}</body></html>'''
-    fn = f"set{si+1}_card{ci+1}.html"
-    open(os.path.join(OUT, fn), "w", encoding="utf-8").write(h)
-    return fn
+    return h
 
-files = [card(si,ci,st) for si,st in enumerate(S) for ci in range(5)]
+FONTS = """
+@font-face{font-family:NK;font-weight:300;src:url('../fonts/Light.otf')}
+@font-face{font-family:NK;font-weight:400;src:url('../fonts/r.otf')}
+@font-face{font-family:NK;font-weight:500;src:url('../fonts/m.otf')}
+@font-face{font-family:NK;font-weight:700;src:url('../fonts/n.otf')}
+@font-face{font-family:NK;font-weight:900;src:url('../fonts/Black.otf')}
+"""
+BASE = FONTS + """
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1080px;height:1080px;font-family:NK,sans-serif;position:relative;overflow:hidden;word-break:keep-all;background:var(--bg);color:var(--fg)}
+.hd{position:absolute;left:60px;right:60px;top:48px;display:flex;justify-content:space-between;align-items:center;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:var(--mut);font-weight:500;z-index:4}
+.ft{position:absolute;left:60px;right:60px;bottom:40px;display:flex;justify-content:space-between;align-items:center;font-size:24px;letter-spacing:2px;color:var(--mut);font-weight:500;z-index:4}
+.main{position:absolute;left:60px;right:60px;top:130px;bottom:110px;display:flex;flex-direction:column;justify-content:center;z-index:2}
+h1{font-weight:900;line-height:1.22;letter-spacing:-2px;color:var(--hc,var(--fg))}
+.line{font-size:34px;line-height:1.5;font-weight:400;margin-top:24px;color:var(--lc,var(--fg))}
+.tag{align-self:flex-start;font-size:30px;font-weight:700;padding:10px 26px;border-radius:40px;margin-bottom:30px}
+.it b{display:block;font-weight:900}.it em{display:block;font-style:normal;font-weight:400;font-size:.82em;opacity:.8;margin-top:4px}
+.dec{position:absolute;z-index:1}
+.hash{display:flex;flex-wrap:wrap;gap:14px;margin-top:38px}
+.hash span{border-radius:60px;padding:12px 28px;font-size:30px;font-weight:700}
+.note{margin-top:36px;font-size:23px;line-height:1.5;font-weight:300;padding-top:16px;border-top:1px solid currentColor;opacity:.8}
+"""
+SET_CSS = {
+2: """
+:root{--bg:#FFF1E6;--fg:#2a1208;--ac:#FF5A36;--ac2:#FFB703;--mut:#8a5a44}
+body.close{--bg:#FF5A36;--fg:#fff;--mut:#ffe2d6}
+.s2 .bar{position:absolute;left:0;top:0;bottom:0;width:28px;background:var(--ac);z-index:3}.close .bar{background:#2a1208}
+.s2 .wm{position:absolute;right:30px;bottom:50px;font-size:440px;font-weight:900;color:rgba(255,90,54,.10);line-height:.8;letter-spacing:-20px}.close .wm{color:rgba(255,255,255,.12)}
+.s2 .main{left:96px}.s2 .hd{left:96px}.s2 .ft{left:96px}
+.s2 .tag{background:var(--ac);color:#fff}
+.cvs,.its,.bbs{display:flex;flex-direction:column;gap:22px;margin-top:40px}
+.band{display:flex;align-items:center;gap:26px;border:4px solid var(--fg);border-radius:20px;padding:20px 34px;font-size:46px;font-weight:900;box-shadow:8px 8px 0 var(--fg)}
+.band i{font-style:normal;font-size:28px;opacity:.7}
+.cv:nth-child(1){background:var(--ac);color:#fff}.cv:nth-child(2){background:var(--ac2)}.cv:nth-child(3){background:#fff}
+.bb{background:#fff;border:4px solid var(--fg);border-radius:40px 40px 40px 8px;padding:26px 38px;font-size:36px;font-weight:700;line-height:1.4;box-shadow:8px 8px 0 var(--ac);max-width:860px}
+.bb:nth-child(even){align-self:flex-end;border-radius:40px 40px 8px 40px;box-shadow:-8px 8px 0 var(--ac2)}
+.it{display:flex;gap:24px;align-items:center;background:#fff;border:4px solid var(--fg);border-radius:20px;padding:18px 28px;box-shadow:8px 8px 0 var(--ac);font-size:36px;font-weight:700;line-height:1.3}
+.it .n{flex:none;width:62px;height:62px;background:var(--ac);color:#fff;border-radius:14px;font-weight:900;font-size:30px;display:flex;align-items:center;justify-content:center}
+.close .hash span{background:#2a1208;color:#fff}
+""",
+3: """
+:root{--bg:#06172a;--fg:#e6f7ff;--ac:#3de0ff;--ac2:#7aa7ff;--mut:#6f93ad}
+body.close{--bg:#3de0ff;--fg:#06172a;--mut:#0b3a55}
+.s3 .arc{inset:0;background:repeating-radial-gradient(circle at 85% -8%,transparent 0 64px,rgba(61,224,255,.16) 65px 67px);-webkit-mask-image:linear-gradient(180deg,#000 0,transparent 75%);mask-image:linear-gradient(180deg,#000 0,transparent 75%)}
+.close .arc{background:repeating-radial-gradient(circle at 85% -8%,transparent 0 64px,rgba(6,23,42,.18) 65px 67px)}
+.s3 .wedge{left:300px;top:-200px;width:900px;height:900px;background:conic-gradient(from 160deg at 70% 8%,transparent 0 0deg,rgba(61,224,255,.22) 22deg,transparent 44deg);filter:blur(2px)}
+.close .wedge{display:none}
+h1{color:var(--hc,#fff)}.close h1{color:#06172a}
+.tag{border:2px solid var(--ac);color:var(--ac)}
+.cvs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:44px}
+.cv{border:2px solid var(--ac);padding:22px 22px 26px;min-height:200px;font-size:34px;font-weight:700;line-height:1.35;display:flex;flex-direction:column;justify-content:space-between;background:rgba(61,224,255,.06);position:relative}
+.cv i{font-style:normal;color:var(--ac);font-size:26px;letter-spacing:3px}
+.its,.bbs{display:flex;flex-direction:column;margin-top:36px}
+.it{display:flex;gap:26px;align-items:center;border-top:2px solid rgba(61,224,255,.45);padding:22px 4px;font-size:37px;font-weight:700;line-height:1.3}
+.it:last-child{border-bottom:2px solid rgba(61,224,255,.45)}
+.it .n{flex:none;color:var(--ac);font-weight:500;font-size:28px;letter-spacing:3px;width:66px}
+.bbs{gap:20px}
+.bb{border:2px solid rgba(61,224,255,.5);border-left:10px solid var(--ac);background:rgba(61,224,255,.07);padding:26px 34px;font-size:36px;font-weight:500;line-height:1.4}
+.close .hash span{background:#06172a;color:#3de0ff}
+""",
+4: """
+:root{--bg:#EFE9FF;--fg:#2a1760;--ac:#FF4F8B;--pu:#3b1f8e;--mut:#7d6bb5}
+body{background:linear-gradient(180deg,var(--pu) 0 470px,#EFE9FF 470px 100%)}
+body.close{background:linear-gradient(180deg,#FF4F8B 0 470px,#3b1f8e 470px 100%);--fg:#fff}
+.s4 .hd{color:#cdbff5}.close .hd{color:#ffe0ec}
+.s4 .ft{color:var(--mut)}.close .ft{color:#cdbff5}
+.s4 .tt{position:absolute;left:60px;right:60px;top:120px;height:330px;display:flex;flex-direction:column;justify-content:center;z-index:2}
+.s4 h1{color:#fff}.s4 .line{color:#e4dbff}
+.s4 .bd{position:absolute;left:60px;right:60px;top:520px;bottom:110px;display:flex;flex-direction:column;justify-content:center;z-index:2;color:var(--fg)}
+.s4 .tag{background:var(--ac);color:#fff}
+.vs{position:absolute;left:50%;top:470px;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;background:var(--ac);color:#fff;font-weight:900;font-size:56px;display:flex;align-items:center;justify-content:center;z-index:3;border:8px solid #EFE9FF}
+.cvs,.its,.bbs{display:flex;flex-direction:column;gap:16px}
+.cv{background:#fff;border-radius:16px;padding:20px 30px 20px 30px;font-size:35px;font-weight:700;border-left:12px solid var(--ac);display:flex;gap:20px;align-items:center}
+.cv i{font-style:normal;color:var(--ac);font-size:26px}
+.cv:nth-child(even){border-left-color:var(--pu)}
+.its{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.its.one{grid-template-columns:1fr}
+.it{background:#fff;border-top:10px solid var(--ac);border-radius:14px;padding:22px 24px;font-size:34px;font-weight:700;line-height:1.35;min-height:150px;display:flex;flex-direction:column;justify-content:space-between}
+.it .n{color:var(--ac);font-size:26px;font-weight:900;letter-spacing:2px}
+.bb{background:#fff;border-radius:30px 30px 30px 6px;padding:24px 34px;font-size:35px;font-weight:700;line-height:1.4;max-width:840px;box-shadow:0 6px 0 #d9cff7}
+.bb:nth-child(even){align-self:flex-end;background:var(--pu);color:#fff;border-radius:30px 30px 6px 30px;box-shadow:0 6px 0 #24125f}
+.cmp{display:flex;gap:20px}
+.cmp>div{flex:1;border-radius:18px;padding:28px 26px;background:#fff}
+.cmp h3{font-size:36px;font-weight:900;margin-bottom:14px;color:var(--pu)}
+.cmp>div:last-child{background:var(--pu);color:#fff}.cmp>div:last-child h3{color:#ff9fc2}
+.cmp p{font-size:31px;line-height:1.5;font-weight:500}
+.close .hash span{background:#fff;color:#3b1f8e}
+""",
+5: """
+:root{--bg:#F3E9DC;--fg:#3a2418;--ac:#C4572B;--ol:#6B7A3A;--mut:#8b6f5a}
+body.close{--bg:#C4572B;--fg:#F8EEDC;--mut:#f2cdb7}
+.s5 .hd span:first-child{background:var(--ac);color:#fff;padding:6px 16px;letter-spacing:3px}.close .hd span:first-child{background:#F8EEDC;color:var(--ac)}
+.rings{right:-170px;top:60px;width:560px;height:560px;border-radius:50%;background:repeating-radial-gradient(circle,transparent 0 40px,rgba(196,87,43,.28) 41px 43px);}
+.rings::after{content:"";position:absolute;left:0;right:0;top:50%;height:2px;background:rgba(196,87,43,.35)}
+.rings::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:2px;background:rgba(196,87,43,.35)}
+.close .rings{background:repeating-radial-gradient(circle,transparent 0 40px,rgba(248,238,220,.3) 41px 43px)}
+.s5 .tag{padding:0 0 10px;border-radius:0;border-bottom:4px solid var(--ac);color:var(--ac);font-size:32px}
+.cvs,.its,.bbs{display:flex;flex-direction:column;margin-top:40px}
+.cvs{flex-direction:row;gap:0;border:3px solid var(--fg)}
+.cv{flex:1;padding:24px 22px;font-size:34px;font-weight:900;line-height:1.3;min-height:190px;display:flex;flex-direction:column;justify-content:space-between;border-right:3px solid var(--fg)}
+.cv:last-child{border-right:0}.cv:nth-child(2){background:var(--ac);color:#fff}
+.cv i{font-style:normal;font-size:26px;letter-spacing:3px;color:var(--ac)}.cv:nth-child(2) i{color:#fff}
+.it{display:flex;align-items:center;gap:22px;border-bottom:3px dashed rgba(58,36,24,.45);padding:22px 4px;font-size:36px;font-weight:700;line-height:1.3}
+.it:first-child{border-top:3px solid var(--fg)}
+.it .n{flex:none;width:58px;height:58px;border-radius:50%;background:var(--ac);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:26px}
+.it .tx{flex:1}.it::after{content:"→";font-size:44px;color:var(--ac);font-weight:300}
+.bbs{gap:26px}
+.bb{background:#FFE9A8;padding:30px 36px;font-size:36px;font-weight:700;line-height:1.4;box-shadow:6px 8px 0 rgba(58,36,24,.18);max-width:800px;transform:rotate(-1.5deg)}
+.bb:nth-child(even){align-self:flex-end;transform:rotate(1.5deg);background:#F6C9A8}
+.close .hash span{border:2px solid #F8EEDC}
+""",
+6: """
+:root{--bg:#14161a;--fg:#f2efe6;--ac:#D4AF37;--mut:#8a8f98}
+body.close{--bg:#D4AF37;--fg:#14161a;--mut:#4d4210}
+.s6 .tl{left:96px;top:140px;bottom:120px;width:3px;background:linear-gradient(180deg,var(--ac),rgba(212,175,55,.2))}
+.s6 .tag{border:2px solid var(--ac);color:var(--ac)}
+.flow{display:flex;align-items:center;justify-content:space-between;margin-top:44px}
+.flow .nd{width:150px;height:150px;border-radius:50%;border:3px solid var(--ac);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;color:var(--ac)}
+.flow .nd:nth-child(1){background:var(--ac);color:#14161a}
+.flow .ar{color:var(--ac);font-size:34px}
+.cvs{display:flex;flex-direction:column;gap:14px;margin-top:44px}
+.cv{display:flex;gap:20px;align-items:center;font-size:36px;font-weight:700;padding:16px 28px;border-left:6px solid var(--ac);background:rgba(212,175,55,.08)}
+.cv i{font-style:normal;color:var(--ac);font-size:28px;font-weight:900}
+.its{position:relative;display:flex;flex-direction:column;gap:20px;margin-top:40px;padding-left:70px}
+.it{position:relative;background:rgba(255,255,255,.05);border:2px solid rgba(212,175,55,.45);border-radius:14px;padding:22px 30px;font-size:37px;font-weight:700;line-height:1.3;display:flex;align-items:center;gap:22px}
+.it::before{content:"";position:absolute;left:-70px;top:50%;width:70px;height:3px;background:var(--ac);opacity:.5}
+.it .n{flex:none;margin-left:-82px;width:62px;height:62px;border-radius:50%;background:var(--ac);color:#14161a;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;z-index:2;text-align:center;line-height:1.05}
+.s6 .its{padding-left:92px}.s6 .it{margin-left:0}.it .n{margin-left:-124px;margin-right:0}
+.it .tx{margin-left:0}
+.s6 .it{padding-left:52px}
+.close .hash span{background:#14161a;color:#D4AF37}
+""",
+}
+def sp(t):
+    if " - " in t:
+        a,b=t.split(" - ",1); return f"<b>{E(a)}</b><em>{E(b)}</em>"
+    return E(t)
+def title2(t): return "<br>".join(E(x.strip()) for x in t.split("/"))
+
+def cardN(si, ci, st):
+    name,_,cards = st; c=cards[ci]; k=c["k"]; n=si+1
+    cls = "close" if k=="close" else ""
+    T = f'<h1 style="font-size:{fs(c["title"],86 if k!="cover" else 108)}px">{title2(c["title"])}</h1>'
+    if c.get("line") and not (n==6 and k=="cover"): T += f'<div class="line">{E(c["line"])}</div>'
+    if k=="cover": T = f'<div class="tag">{E(c["tag"])}</div>' + T
+    C=""; deco=""
+    if k=="cover":
+        if n==6:
+            parts=[x.strip() for x in c["line"].split("→")]
+            C='<div class="flow">'+'<span class="ar">›</span>'.join(f'<div class="nd">{E(p)}</div>' for p in parts)+'</div>'
+        C += '<div class="cvs">'+"".join(f'<div class="cv {"band" if n==2 else ""}"><i>0{i+1}</i>{E(t)}</div>' for i,t in enumerate(c["items"]))+'</div>'
+    elif k=="bubbles":
+        C='<div class="bbs">'+"".join(f'<div class="bb">{E(t)}</div>' for t in c["items"])+'</div>'
+    elif k in ("list","steps"):
+        items=c["items"]
+        lab=lambda i,t: (f"STEP<br>{t[0]}" if k=="steps" else f"0{i+1}")
+        txt=lambda t: E(t[1]) if k=="steps" else sp(t)
+        cl = "its one" if (n==4 and len(items)!=4) else "its"
+        C=f'<div class="{cl}">'+"".join(f'<div class="it"><span class="n">{lab(i,t)}</span><span class="tx">{txt(t)}</span></div>' for i,t in enumerate(items))+'</div>'
+    elif k=="compare":
+        a,b=c["a"],c["b"]
+        C=f'<div class="cmp"><div><h3>{E(a[0])}</h3><p>{E(a[1])}</p></div><div><h3>{E(b[0])}</h3><p>{E(b[1])}</p></div></div>'
+    elif k=="close":
+        if c.get("tags"): C+='<div class="hash">'+"".join(f'<span>{E(h)}</span>' for h in c["tags"].split())+'</div>'
+        if c.get("note"): C+=f'<div class="note">{E(c["note"])}</div>'
+    if n==2: deco=f'<div class="bar"></div><div class="wm dec">0{ci+1}</div>'
+    if n==3: deco='<div class="dec arc"></div><div class="dec wedge"></div>'
+    if n==5: deco='<div class="dec rings"></div>'
+    if n==6 and k not in ("close","cover"): deco='<div class="dec tl"></div>'
+    if n==4:
+        vs='<div class="vs">VS</div>' if k=="cover" else ""
+        main=f'{vs}<div class="tt">{T}</div><div class="bd">{C}</div>'
+        if k=="compare": main=f'<div class="tt">{T}</div><div class="bd">{C}</div>'
+    else:
+        main=f'<div class="main">{T}{C}</div>'
+    hdr=f'<div class="hd"><span>Cheongdam Star Clinic</span><span>{E(name) if n in (2,5) else "Set 0"+str(n)}</span></div>'
+    ftr=f'<div class="ft"><span>{n} / 6</span><span>{ci+1} / 5</span></div>'
+    return f'<!doctype html><html lang="ko"><head><meta charset="utf-8"><style>{BASE}{SET_CSS[n]}</style></head><body class="s{n} {cls}">{deco}{hdr}{main}{ftr}</body></html>'
+
+def card(si,ci,st):
+    fn=f"set{si+1}_card{ci+1}.html"
+    h = card1(si,ci,st,True) if si==0 else cardN(si,ci,st)
+    open(os.path.join(OUT,fn),"w",encoding="utf-8").write(h); return fn
+
+files=[card(si,ci,st) for si,st in enumerate(S) for ci in range(5)]
 json.dump(files, open(os.path.join(OUT,"_files.json"),"w"))
 print(len(files))
