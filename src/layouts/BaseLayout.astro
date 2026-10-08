@@ -15,7 +15,7 @@ interface Props {
   image?: string;
 }
 
-const { title, description = '다솜재무센터 금융 블로그', image = '/og-default.svg' } = Astro.props;
+const { title, description = '다솜재무센터 · 법인대표를 위한 가업승계·상속증여·법인재무 블로그', image = '/og-default.svg' } = Astro.props;
 const origin = Astro.url.origin;
 const ogImage = image.startsWith('http') ? image : `${origin}${image}`;
 const pageUrl = `${origin}${Astro.url.pathname}`;
