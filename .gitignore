@@ -8,3 +8,11 @@ dist/
 .env
 .env.*
 !.env.example
+
+# Python (ceo-daily)
+__pycache__/
+*.pyc
+.venv/
+
+# macOS
+.DS_Store
